@@ -1,0 +1,27 @@
+# Maintainer: Sarah Harvey <worldwise001@gmail.com>
+# Contributor: Sarah Harvey <worldwise001@gmail.com>
+
+pkgname=honeyd
+pkgver=git
+pkgrel=20120817
+pkgdesc="A small daemon that creates virtual hosts on a network."
+depends=('libdnet' ' libevent2' 'libdnsres' 'libpcap' 'pcre' 'zlib' 'libedit' 'bison' 'flex' 'libtool' 'automake')
+makedepends=('git')
+optdepends=('python2')
+arch=(i686 x86_64)
+url="https://github.com/DataSoft/Honeyd"
+license=("GPL")
+
+build()
+{
+	cd $srcdir/$pkgname-$pkgver
+	git archive --format=tar --remote=https://github.com/DataSoft/Honeyd master | tar -xf -
+  
+	./configure --prefix=/usr
+	make || return 1
+}
+
+package()
+{
+	make prefix=$pkgdir/usr install
+}
