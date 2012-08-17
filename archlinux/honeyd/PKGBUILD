@@ -5,23 +5,36 @@ pkgname=honeyd
 pkgver=git
 pkgrel=20120817
 pkgdesc="A small daemon that creates virtual hosts on a network."
-depends=('libdnet' ' libevent2' 'libdnsres' 'libpcap' 'pcre' 'zlib' 'libedit' 'bison' 'flex' 'libtool' 'automake')
-makedepends=('git')
+depends=('libdnet' ' libevent' 'libpcap' 'pcre' 'zlib' 'libedit' 'bison' 'flex' 'libtool' 'automake' 'rrdtool')
+makedepends=('unzip')
 optdepends=('python2')
 arch=(i686 x86_64)
 url="https://github.com/DataSoft/Honeyd"
+backup=('etc/honeyd/config.default' 'etc/conf.d/honeyd')
 license=("GPL")
 
 build()
 {
-	cd $srcdir/$pkgname-$pkgver
-	git archive --format=tar --remote=https://github.com/DataSoft/Honeyd master | tar -xf -
-  
+	cd $srcdir
+	wget https://github.com/DataSoft/Honeyd/zipball/master
+	mv master $pkgname-$pkgver-src.zip
+	unzip $pkgname-$pkgver-src.zip
+	mv DataSoft-Honeyd-??????? $pkgname-$pkgver
+	cd $pkgname-$pkgver
+
+	./autogen.sh
+	automake  
 	./configure --prefix=/usr
-	make || return 1
+	make
 }
 
 package()
 {
+	cd $srcdir/$pkgname-$pkgver
 	make prefix=$pkgdir/usr install
+	cd ../../
+	cp -r extra/etc $pkgdir/
+	mkdir $pkgdir/etc/honeyd/
+	mv $pkgdir/usr/share/honeyd/config.* $pkgdir/etc/honeyd/
+	cp $pkgdir/etc/honeyd/config.sample $pkgdir/etc/honeyd/config.default
 }
