@@ -1,0 +1,6 @@
+#
+# Parameters to be passed to honeyd
+#
+HONEYD_CONF="/etc/honeyd/config.default"
+HONEYD_SUBNET="10.0.0.0/8"
+HONEYD_ARGS=""
